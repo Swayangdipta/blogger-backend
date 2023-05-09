@@ -15,19 +15,18 @@ exports.register = (req,res) => {
     let user = new User(req.body)
 
     try {
-        user.save((registeredUser,err)=>{
-            if(err){
-                return res.status(400).json({
-                    error: true,
-                    message: ["Faild to register!",err]
-                })
-            }
-
+        user.save().then(resp=>{
             return res.status(200).json({
                 success: true,
                 message: ["Registration complete.Login to continue."]
             })
-        })        
+        }).catch(err => {
+            return res.status(400).json({
+                error: true,
+                message: ["Faild to register!",err]
+            })
+        })
+        
     } catch (error) {
         return res.status(500).json({
             error: true,
