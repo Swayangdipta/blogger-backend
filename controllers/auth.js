@@ -80,6 +80,7 @@ exports.login = (req,res) => {
             // Creating and setting token for authorization/access
             let token = jwt.sign({_id:user._id,username: user.username},config.SECRET)
             res.cookie("token",token,{expiry: new Date(Date.now()+2.592e+9)})
+            
             const {_id,name,email,role,username} = user
 
             return res.status(200).json({
@@ -99,5 +100,4 @@ exports.login = (req,res) => {
             message: ["Something went wrong.Try again!",error]
         })
     }
-
 }
