@@ -22,10 +22,14 @@ const userSchema = new mongoose.Schema({
     },
     profilePicture: {
         type: String,
-        default: `https://avatars.dicebear.com/api/bottts/svg`
+        default: 'https://avatars.dicebear.com/api/bottts/svg'
     },
-    encryptedPassword: "",
-    salt: '',
+    encryptedPassword: {
+        type: String
+    },
+    salt: {
+        type: String
+    },
     blogs: [
         {
             type: mongoose.Schema.Types.ObjectId,
