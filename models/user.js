@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema({
         unique: true,
         trim: true
     },
+    profilePicture: {
+        type: String,
+        default: `https://avatars.dicebear.com/api/bottts/.svg`
+    },
     encryptedPassword: "",
     salt: '',
     blogs: [
@@ -51,6 +55,7 @@ userSchema.virtual('password')
         this._password = password
         this.salt = v1()
         this.encryptedPassword = this.securePassword(password)
+        this.profilePicture = `https://avatars.dicebear.com/api/bottts/${this.username}.svg`
     }).get(function(){
         return this._password
     })
