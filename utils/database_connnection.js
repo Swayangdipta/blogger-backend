@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 
 exports.dbConnection = () => {
     try {
-        mongoose.connect(config.DB_URL).then(()=>{
+        mongoose.connect(config.DB_URL).then((res)=>{
             console.log(`DATABASE CONNECTED.`);
         }).catch(err => {
             console.log(err);
