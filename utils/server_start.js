@@ -1,10 +1,9 @@
-const app = require('express')()
 const config  = require('../config/config')
 const PORT = config.PORT || 9000
 
 let restartCounter = 0
 
-exports.startServer = () => {
+exports.startServer = app => {
     try {
         app.listen(PORT,()=>{
             console.log(`Server started at port::${PORT}`);
