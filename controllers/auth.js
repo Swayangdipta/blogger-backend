@@ -183,7 +183,10 @@ exports.resetPassword = (req,res) => {
             user.forgetPasswordToken = undefined
 
             user.save().then(updatedUser => {
-                return res.status(400).json({success: true,message: ["Password reset success"]})
+                if(!createdBlog) {
+                    return res.status(400).json({error: true,message: ["Faild to reset password!",error]})
+                }
+                return res.status(200).json({success: true,message: ["Password reset success"]})
             }).catch(error => {
                 return res.status(400).json({error: true,message: ["Faild to reset password!",error]})
             })
