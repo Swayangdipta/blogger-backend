@@ -1,6 +1,7 @@
 const config = require('../config/config')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
+const {expressjwt} = require('express-jwt')
 
 exports.register = (req,res) => {
     const {name,email,password,username} = req.body
@@ -95,4 +96,30 @@ exports.login = (req,res) => {
             message: ["Something went wrong.Try again!",error]
         })
     }
+}
+
+// Middlewares Controllers
+
+exports.isSignedIn = expressjwt({
+    secret: config.SECRET,
+    algorithms: ["SHA256","SHA512","HS256","RS256","sha1",'RSA'],
+    userProperty: "auth"
+})
+
+exports.isAuthenticated = (req,res,next) => {
+    let checker = req.profile && req.auth && req.profile._id === req.auth._id
+
+    if(!checker){
+        return res.status(401).json({error: true,message: ["Unauthorized.","No Authorizatiion token found!"]})
+    }
+
+    next()
+}
+
+exports.isAdmin = (req,res,next) => {
+    if(!(req.profile.role >= 5 && req.auth.role >= 5)){
+        return res.status(401).json({error: true,message: ["You don't have admin access.","Not admin","Don't act smart"]})
+    }
+
+    next()
 }
