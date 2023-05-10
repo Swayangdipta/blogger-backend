@@ -37,7 +37,7 @@ exports.register = (req,res) => {
 
 exports.login = (req,res) => {
     const {username,password} = req.body
-
+    console.log(username);
     if(username === '' || password === ''){
         return res.status(400).json({
             error: true,
@@ -48,26 +48,13 @@ exports.login = (req,res) => {
     // Finding the user by username or email
 
     try {
-        User.find({
+        User.findOne({
             $or: [
             { email: {$eq: username}},
             { username: {$eq: username}}
             ]
-        }).exec((user,err)=>{
-            // Error handling
-            if(err){
-                return res.status(400).json({
-                    error: true,
-                    message: [err]
-                })
-            }else if(!user){
-                return res.status(404).json({
-                    error: true,
-                    message: ["No user found!"]
-                })
-            }
-
-            // If no error and user found
+        }).then( user =>{
+            // user found
             // Match Passwords
             if(!user.authenticate(password)){
                 return res.status(404).json({
@@ -92,6 +79,14 @@ exports.login = (req,res) => {
                     role
                 }
             })
+        }).catch(err => {
+            // Error handling
+            if(err){
+                return res.status(404).json({
+                    error: true,
+                    message: ["No user found!",err]
+                })
+            }
         })        
     } catch (error) {
         return res.status(500).json({
