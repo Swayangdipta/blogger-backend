@@ -2,6 +2,7 @@ const config = require('../config/config')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 const {expressjwt} = require('express-jwt')
+const crypto = require('crypto')
 
 exports.register = (req,res) => {
     const {name,email,password,username} = req.body
@@ -135,6 +136,10 @@ exports.getResetPasswordURL = (req,res) => {
 
     try {
         User.findOne({email}).then(async user => {
+            if(!user){
+                return res.status(404).json({error:true, message:["No User Found"]})
+            }
+            
             let resetToken = await user.generateForgetPasswordToken()
             user.save({validateBeforeSave: false}).then(doc => {
                 let resetUrl = `${req.headers.origin}/password/reset/${resetToken}`
@@ -144,6 +149,48 @@ exports.getResetPasswordURL = (req,res) => {
             })
         }).catch(err => {
             return res.status(400).json({error: true,message: ["Faild to generate reset url!",err]})
+        })
+    } catch (error) {
+        return res.status(500).json({error: true,message: ["Something went wrong",error]})
+    }
+}
+
+exports.resetPassword = (req,res) => {
+    const {token: resetToken} = req.query
+    const {password, confirmPassword} = req.body
+
+    if(!password || !confirmPassword || password !== confirmPassword){
+        return res.status(400).json({error: true,message: ["Passwords did not matched!"]})
+    }
+
+    console.log(resetToken)
+    const resetPasswordToken = 
+            crypto.createHash('sha256')
+                    .update(resetToken)
+                    .digest("hex")
+
+    try {
+        User.findOne({
+            forgetPasswordToken: resetPasswordToken,
+            forgetPasswordExpiry: {$gt: Date.now()}
+        }).then(user => {
+            if(!user){
+                return res.status(404).json({error:true, message:["No User Found"]})
+            }
+
+            user.password = password
+            user.forgetPasswordExpiry = undefined
+            user.forgetPasswordToken = undefined
+
+            user.save().then(updatedUser => {
+                return res.status(400).json({success: true,message: ["Password reset success"]})
+            }).catch(error => {
+                return res.status(400).json({error: true,message: ["Faild to reset password!",error]})
+            })
+        }).catch(err => {
+            if(err){
+                return res.status(400).json({error:true, message:["Faild to get user details!",err]})
+            }
         })
     } catch (error) {
         return res.status(500).json({error: true,message: ["Something went wrong",error]})
