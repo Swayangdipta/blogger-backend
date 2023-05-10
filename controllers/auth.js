@@ -67,7 +67,7 @@ exports.login = (req,res) => {
             let token = jwt.sign({_id:user._id,username: user.username},config.SECRET)
             res.cookie("token",token,{expiry: new Date(Date.now()+2.592e+9)})
             
-            const {_id,name,email,role,username} = user
+            const {_id,name,email,role,username,profilePicture} = user
 
             return res.status(200).json({
                 token,
@@ -76,6 +76,7 @@ exports.login = (req,res) => {
                     name,
                     username,
                     email,
+                    profilePicture,
                     role
                 }
             })
