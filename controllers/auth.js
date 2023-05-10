@@ -123,3 +123,29 @@ exports.isAdmin = (req,res,next) => {
 
     next()
 }
+
+// Password Reset controllers
+
+exports.getResetPasswordURL = (req,res) => {
+    const {email} = req.body
+
+    if(!email || email === null){
+        return res.status(400).json({error: true,message: ["Please provide an email"]})
+    }
+
+    try {
+        User.findOne({email}).then(async user => {
+            let resetToken = await user.generateForgetPasswordToken()
+            user.save({validateBeforeSave: false}).then(doc => {
+                let resetUrl = `${req.headers.origin}/password/reset/${resetToken}`
+                // Currently logging to console but later will get emailed
+                console.log(resetUrl);
+                return res.status(200).json({success: true,message: ["Password reset link sent!"]})
+            })
+        }).catch(err => {
+            return res.status(400).json({error: true,message: ["Faild to generate reset url!",err]})
+        })
+    } catch (error) {
+        return res.status(500).json({error: true,message: ["Something went wrong",error]})
+    }
+}
