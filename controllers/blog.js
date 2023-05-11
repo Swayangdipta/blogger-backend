@@ -5,7 +5,10 @@ const { uploadImage } = require('../utils/cloudinary_operations')
 exports.getBlogById = (req,res,next,id) => {
 
     try {
-        Blog.findById(id).then(blog => {
+        Blog.findById(id)
+        .populate("author","_id username profilePicture role")
+        .populate("comments")
+        .then(blog => {
             if(!blog){
                 return res.status(404).json({error: true,message: ["No blog found!"]})
             }
@@ -15,6 +18,33 @@ exports.getBlogById = (req,res,next,id) => {
         }).catch(error => {
             return res.status(400).json({error: true,message: ["Faild to load blog information!",error]})
         })        
+    } catch (error) {
+        return res.status(500).json({error: true,message: ["Something went wrong!",error]})
+    }
+
+}
+
+exports.getABlog = (req,res) => {
+    req.blog.comments = undefined
+    return res.status(200).json({success: true,data: req.blog})
+}
+
+exports.getAllBlogs = (req,res) => {
+    let limit = req.query.limit || 20
+    
+    try {
+        Blog.find()
+            .limit(limit)
+            .select("-comments")
+            .then( blogs => {
+                if(!blogs || blogs.length === 0){
+                    return res.status(404).json({error: true,message: ["No blog found!"]})
+                }
+
+                return res.status(200).json({success: true,data: blogs})
+            }).catch( err => {
+                return res.status(400).json({error: true,message: ["Faild to load blogs!",err]})
+            })        
     } catch (error) {
         return res.status(500).json({error: true,message: ["Something went wrong!",error]})
     }
