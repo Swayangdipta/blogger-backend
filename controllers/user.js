@@ -19,3 +19,19 @@ exports.getUserById = (req,res,next,id) => {
     }
 
 }
+
+exports.pushBlogToUser = (req,res) => {
+    try {
+        User.findByIdAndUpdate(req.profile._id,
+            {$push: {'blogs': req.blog}}).then( user => {
+                if(!user){
+                    return res.status(404).json({error: true,message: ["No user found!"]})
+                }
+
+                return res.status(200).json({success: true,message: ["Blog Published!"]})
+
+            })
+    } catch (error) {
+        return res.status(500).json({error: true,message: ["Something went wrong!",error]})
+    }
+}
