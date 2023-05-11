@@ -8,6 +8,7 @@ const { dbConnection } = require('./utils/database_connnection')
 
 // Route Imports
 const authRoutes = require('./routes/auth')
+const blogRoutes = require('./routes/blog')
 
 // Express server
 const app = express()
@@ -32,6 +33,7 @@ app.use(cors())
 
 // Setting up routes
 app.use("/api",authRoutes)
+app.use("/api",blogRoutes)
 
 // Finally Starting the Server
 startServer(app)
