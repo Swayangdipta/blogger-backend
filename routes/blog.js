@@ -1,11 +1,14 @@
 const router = require('express').Router()
 const { isSignedIn,isAuthenticated } = require('../controllers/auth')
-const { createBlog, getBlogById } = require('../controllers/blog')
+const { createBlog, getBlogById, getAllBlogs, getABlog } = require('../controllers/blog')
 const { getUserById, pushBlogToUser } = require('../controllers/user')
 
 router.param('userId',getUserById)
+router.param('blogId',getBlogById)
 
 router.post('/blog/create/:userId',createBlog,pushBlogToUser)
+router.get('/blogs',getAllBlogs)
+router.get('/blog/:blogId',getABlog)
 
 
 module.exports = router
