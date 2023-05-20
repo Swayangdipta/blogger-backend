@@ -1,13 +1,14 @@
 const Blog = require('../models/blog')
 const formidable = require('formidable')
-const { uploadImage } = require('../utils/cloudinary_operations')
+const _ = require('lodash')
+const { uploadImage, updateImage } = require('../utils/cloudinary_operations')
 
 exports.getBlogById = (req,res,next,id) => {
 
     try {
         Blog.findById(id)
         .populate("author","_id username profilePicture role")
-        .populate("comments")
+        // .populate("comments")
         .then(blog => {
             if(!blog){
                 return res.status(404).json({error: true,message: ["No blog found!"]})
@@ -86,6 +87,50 @@ exports.createBlog = (req,res,next) => {
                     next()
                 }).catch(error => {
                     return res.status(400).json({error: true,message: ["Faild to publish blog!",error]})
+                })
+            }).catch( ce => {
+                return res.status(400).json({error: true,message: ["Image upload faild!",ce]})
+            })
+        })
+    } catch (error) {
+        return res.status(500).json({error: true,message: ["Something went wrong!",error]})
+    }
+}
+
+exports.updateBlog = (req,res) => {
+    try {
+        const form = new formidable.IncomingForm()
+        form.keepExtensions = true
+        form.parse(req,(err,fields,files)=>{
+            if(err){
+                return res.status(400).json({error: true,message: ["Error while processing blog!",err]})
+            }
+
+            let newBlog = req.blog
+            newBlog = _.extend(newBlog,fields)
+
+            updateImage(files.coverImage.filepath,req.blog.coverImage.public_id).then(response => {
+
+                if(response.error){
+                    return res.status(400).json({error: true,message: ["Faild to upload image!",response.error]})
+                }
+
+                const imageToStore = {
+                    public_id: response.public_id,
+                    version: response.version,
+                    format: response.format
+                }
+                
+                newBlog.coverImage = imageToStore
+
+                newBlog.save().then(createdBlog => {
+                    if(!createdBlog) {
+                        return res.status(400).json({error: true,message: ["Faild to update blog!",error]})
+                    }
+
+                    return res.status(200).json({success: true,message: ["Blog Updated!"]})
+                }).catch(error => {
+                    return res.status(400).json({error: true,message: ["Faild to update blog!",error]})
                 })
             }).catch( ce => {
                 return res.status(400).json({error: true,message: ["Image upload faild!",ce]})

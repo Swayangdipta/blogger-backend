@@ -16,3 +16,19 @@ exports.uploadImage = image => {
         return {error: error}
     })
 }
+
+exports.destroyImage = image => {
+    return cloudinary.uploader.destroy(image).then(data => {
+        return data
+    }).catch(error => {
+        return {error: error}
+    })
+}
+
+exports.updateImage = (image,id) => {
+    cloudinary.uploader.upload(image,{invalidate: true,public_id: id}).then(data => {
+        return data
+    }).catch(error => {
+        return {error: error}
+    })
+}
