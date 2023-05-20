@@ -1,7 +1,7 @@
 const Blog = require('../models/blog')
 const formidable = require('formidable')
 const _ = require('lodash')
-const { uploadImage, updateImage } = require('../utils/cloudinary_operations')
+const { uploadImage, updateImage, destroyImage } = require('../utils/cloudinary_operations')
 
 exports.getBlogById = (req,res,next,id) => {
 
@@ -139,6 +139,28 @@ exports.updateBlog = (req,res) => {
                 })
             }).catch( ce => {
                 return res.status(400).json({error: true,message: ["Image upload faild!",ce]})
+            })
+        })
+    } catch (error) {
+        return res.status(500).json({error: true,message: ["Something went wrong!",error]})
+    }
+}
+
+exports.removeImage = (req,res,next) => {
+    try {
+        destroyImage(req.blog.coverImage.public_id).then(response => {
+
+            if(response.error){
+                return res.status(400).json({error: true,message: ["Faild to remove image!",response.error]})
+            }
+
+            Blog.deleteOne({_id: req.blog._id}).then(removedBlog => {
+                if(!removedBlog) {
+                    return res.status(400).json({error: true,message: ["Faild to remove blog!",error]})
+                }
+                next()
+            }).catch(error => {
+                return res.status(400).json({error: true,message: ["Faild to remove blog!",error]})
             })
         })
     } catch (error) {

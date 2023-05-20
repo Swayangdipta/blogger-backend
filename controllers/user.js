@@ -35,3 +35,19 @@ exports.pushBlogToUser = (req,res) => {
         return res.status(500).json({error: true,message: ["Something went wrong!",error]})
     }
 }
+
+exports.popBlogFromUser = (req,res) => {
+    try {
+        User.findByIdAndUpdate(req.profile._id,
+            {$pull: {'blogs': req.blog._id}}).then( user => {
+                if(!user){
+                    return res.status(404).json({error: true,message: ["No user found!"]})
+                }
+
+                return res.status(200).json({success: true,message: ["Blog Removed!"]})
+
+            })
+    } catch (error) {
+        return res.status(500).json({error: true,message: ["Something went wrong!",error]})
+    }
+}
