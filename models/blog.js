@@ -8,8 +8,10 @@ const blogSchema = new mongoose.Schema({
         maxlength: 200
     },
     coverImage: {
-        type: String,
-        default: 'https://placekitten.com/640/320'
+        type: Object,
+        default: {
+            url:'https://placekitten.com/640/320'
+        }
     },
     blog: [],
     likes: {

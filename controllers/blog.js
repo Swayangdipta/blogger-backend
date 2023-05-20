@@ -75,8 +75,12 @@ exports.createBlog = (req,res,next) => {
                     return res.status(400).json({error: true,message: ["Faild to upload image!",response.error]})
                 }
 
-                const imageToStore = `https://res.cloudinary.com/swayangdipta/image/upload/q_auto/v${response.version}/${response.public_id}.${response.format}`
-                
+                const imageToStore = {
+                    public_id: response.public_id,
+                    version: response.version,
+                    format: response.format,
+                    url: `https://res.cloudinary.com/swayangdipta/image/upload/q_auto/v${response.version}/${response.public_id}.${response.format}`
+                }
                 newBlog.coverImage = imageToStore
 
                 newBlog.save().then(createdBlog => {
@@ -118,7 +122,8 @@ exports.updateBlog = (req,res) => {
                 const imageToStore = {
                     public_id: response.public_id,
                     version: response.version,
-                    format: response.format
+                    format: response.format,
+                    url: `https://res.cloudinary.com/swayangdipta/image/upload/q_auto/v${response.version}/${response.public_id}.${response.format}`
                 }
                 
                 newBlog.coverImage = imageToStore
