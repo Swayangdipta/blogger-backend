@@ -9,7 +9,7 @@ router.param('blogId',getBlogById)
 router.post('/blog/create/:userId',createBlog,pushBlogToUser)
 router.get('/blogs',getAllBlogs)
 router.get('/blog/:blogId',getABlog)
-router.get('/blog/update/:blogId',updateBlog)
+router.put('/blog/update/:userId/:blogId',updateBlog)
 
 
 module.exports = router

@@ -26,7 +26,7 @@ exports.destroyImage = image => {
 }
 
 exports.updateImage = (image,id) => {
-    cloudinary.uploader.upload(image,{invalidate: true,public_id: id}).then(data => {
+    return cloudinary.uploader.upload(image,{invalidate: true,public_id: id}).then(data => {
         return data
     }).catch(error => {
         return {error: error}
