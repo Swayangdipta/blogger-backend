@@ -135,7 +135,7 @@ exports.getResetPasswordURL = (req,res) => {
     }
 
     try {
-        User.findOne({email}).then(async user => {
+        User.findOne({email: {$eq: email}}).then(async user => {
             if(!user){
                 return res.status(404).json({error:true, message:["No User Found"]})
             }
