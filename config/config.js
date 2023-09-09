@@ -4,7 +4,8 @@ const config = {
     "SECRET": process.env.SECRET,
     "CLOUDINARY_CLOUD_NAME": process.env.CLOUDINARY_CLOUD_NAME,
     "CLOUDINARY_API_KEY": process.env.CLOUDINARY_API_KEY,
-    "CLOUDINARY_API_SECCRET": process.env.CLOUDINARY_API_SECCRET
+    "CLOUDINARY_API_SECCRET": process.env.CLOUDINARY_API_SECCRET,
+    "BREVO_API_KEY": process.env.BREVO_API_KEY
 }
 
 module.exports = config

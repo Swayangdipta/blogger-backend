@@ -9,6 +9,9 @@ const { dbConnection } = require('./utils/database_connnection')
 // Route Imports
 const authRoutes = require('./routes/auth')
 const blogRoutes = require('./routes/blog')
+const categoryRoutes = require('./routes/Category')
+const userRoutes = require('./routes/user')
+const reportRoutes = require('./routes/report')
 
 // Express server
 const app = express()
@@ -34,6 +37,9 @@ app.use(cors())
 // Setting up routes
 app.use("/api",authRoutes)
 app.use("/api",blogRoutes)
+app.use("/api",categoryRoutes)
+app.use("/api",userRoutes)
+app.use("/api",reportRoutes)
 
 // Finally Starting the Server
 startServer(app)

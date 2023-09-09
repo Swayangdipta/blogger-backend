@@ -7,24 +7,38 @@ const blogSchema = new mongoose.Schema({
         required: true,
         maxlength: 200
     },
-    coverImage: {
-        type: Object,
-        default: {
-            url:'https://placekitten.com/640/320'
-        }
+    description: {
+        type: String,
+        required: true,
+        maxlength: 500
     },
-    blog: [],
+    coverImage: {
+        type: String,
+        default: 'https://placekitten.com/640/320'
+    },
+    blog: {
+        type: String,
+        required: true
+    },
     likes: {
         type: Number,
         default: 0
     },
-    comments: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Comment'
-    }],
+    views: {
+        type: Number,
+        default: 0
+    },
+    comments: {
+        type: Array,
+        default: []
+    },
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
+    },
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category'
     }
 },{timestamps: true})
 

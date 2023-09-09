@@ -3,6 +3,7 @@ const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 const {expressjwt} = require('express-jwt')
 const crypto = require('crypto')
+const { sendMail } = require('../utils/mail_service')
 
 exports.register = (req,res) => {
     const {name,email,password,username} = req.body
@@ -59,7 +60,7 @@ exports.login = (req,res) => {
             // user found
             // Match Passwords
             if(!user.authenticate(password)){
-                return res.status(404).json({
+                return res.status(403).json({
                     error: true,
                     message: ["Username or password did not matched!"]
                 })
@@ -91,6 +92,18 @@ exports.login = (req,res) => {
                 })
             }
         })        
+    } catch (error) {
+        return res.status(500).json({
+            error: true,
+            message: ["Something went wrong.Try again!",error]
+        })
+    }
+}
+
+exports.logout = (req,res) => {
+    try {
+        res.clearCookie("token")
+        return res.status(200).json({success: true,message: ["User Signed Out",'']})
     } catch (error) {
         return res.status(500).json({
             error: true,
@@ -141,11 +154,17 @@ exports.getResetPasswordURL = (req,res) => {
             }
             
             let resetToken = await user.generateForgetPasswordToken()
+
             user.save({validateBeforeSave: false}).then(doc => {
                 let resetUrl = `${req.headers.origin}/password/reset/${resetToken}`
-                // Currently logging to console but later will get emailed
-                console.log(resetUrl);
-                return res.status(200).json({success: true,message: ["Password reset link sent!"]})
+                let data = {
+                    recipientMail: user.email,
+                    recipientName: user.name,
+                    resetUrl: resetUrl,
+                    content: '',
+                    subject: 'Reset Password for AnoLog'
+                }
+                sendMail(req,res,data)
             })
         }).catch(err => {
             return res.status(400).json({error: true,message: ["Faild to generate reset url!",err]})

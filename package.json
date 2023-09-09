@@ -7,10 +7,15 @@
     "dev": "nodemon server.js",
     "start": "node server.js"
   },
-  "keywords": ["Blogging","Blogger Server","Node Server"],
+  "keywords": [
+    "Blogging",
+    "Blogger Server",
+    "Node Server"
+  ],
   "author": "Swayangdipta Das",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.4.0",
     "cloudinary": "^1.36.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",

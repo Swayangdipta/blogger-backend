@@ -41,15 +41,13 @@ const userSchema = new mongoose.Schema({
         default: 0
     },
     accountStatus: {
-        type: "String",
+        type: String,
         default: "OK"
     },
-    likes: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Blog'
-        }
-    ],
+    likes: {
+        type: Object,
+        default: {}
+    },
     forgetPasswordToken: String,
     forgetPasswordExpiry: Date
 },{timestamps: true})
